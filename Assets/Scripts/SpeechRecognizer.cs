@@ -6,6 +6,8 @@ using SimpleJSON;
 
 public class SpeechRecognizer
 {
+    private string recognizedText; // 音声認識結果を格納する
+
     public IEnumerator RecognizeSpeech(string audioBase64)
     {
         string apiKey = "AIzaSyCnoTSkifSkBKsdQruNSEkUD9X0lY5hQhw";
@@ -25,7 +27,7 @@ public class SpeechRecognizer
 
         using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
         {
-            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonRequest);
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonRequest);
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
@@ -39,19 +41,27 @@ public class SpeechRecognizer
                 var jsonResponse = JSON.Parse(request.downloadHandler.text);
                 if (jsonResponse["results"] != null && jsonResponse["results"].Count > 0)
                 {
-                    string transcript = jsonResponse["results"][0]["alternatives"][0]["transcript"];
-                    Debug.Log($"認識されたテキスト: {transcript}");
+                    // 最初の候補を取得
+                    recognizedText = jsonResponse["results"][0]["alternatives"][0]["transcript"];
+                    Debug.Log($"認識されたテキスト: {recognizedText}");
                 }
                 else
                 {
+                    recognizedText = ""; // 結果がない場合は空にする
                     Debug.LogWarning("音声認識の結果が見つかりませんでした。");
-                    Debug.Log($"レスポンス内容（JSON形式）: {request.downloadHandler.text}");
                 }
-            }else
+            }
+            else
             {
+                recognizedText = ""; // エラー時も空にする
                 Debug.LogError($"エラーが発生しました: {request.error}");
                 Debug.Log($"レスポンス内容（JSON形式）: {request.downloadHandler.text}");
             }
         }
+    }
+
+    public string GetRecognizedText()
+    {
+        return recognizedText; // 結果を取得する
     }
 }
