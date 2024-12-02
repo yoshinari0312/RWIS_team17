@@ -10,6 +10,7 @@ public class SpeechManagerWithUI : MonoBehaviour
     private bool isRecording = false; // 録音中かどうかのフラグ
     private float recordingStartTime; // 録音開始時間
     private bool isProcessing = false; // 処理中フラグ
+    
 
     void Start()
     {
@@ -56,6 +57,7 @@ public class SpeechManagerWithUI : MonoBehaviour
         recordedClip = Microphone.Start(null, false, 60, 16000);
         recordingStartTime = Time.time; // 録音開始時間を記録
         isRecording = true; // 録音中フラグを立てる
+        statusText.text = "録音中...";
         Debug.Log("録音を開始しました...");
     }
 
@@ -119,10 +121,31 @@ public class SpeechManagerWithUI : MonoBehaviour
         if (!string.IsNullOrEmpty(recognizedText))
         {
             statusText.text = $"認識結果: {recognizedText}";
+            StartCoroutine(SynthesizeSpeech("なるほど、ありがとうございます。"));
         }
         else
         {
             statusText.text = "認識結果なし。";
+        }
+    }
+    IEnumerator SynthesizeSpeech(string text)
+    {
+        SpeechSynthesizer synthesizer = new SpeechSynthesizer();
+        yield return synthesizer.SynthesizeSpeech(text, PlaySynthesizedAudio);
+    }
+
+    void PlaySynthesizedAudio(AudioClip audioClip)
+    {
+        if (audioClip != null)
+        {
+            // 2Dオーディオとして再生
+            AudioSource audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.spatialBlend = 0; // 2Dサウンドに設定
+            audioSource.clip = audioClip;
+            audioSource.Play();
+
+            // 再生が完了したらAudioSourceを削除
+            Destroy(audioSource, audioClip.length);
         }
     }
 }
