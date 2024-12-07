@@ -1,58 +1,68 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
-using System.Text;
-using Newtonsoft.Json; // Newtonsoft.Jsonを使用
+using Newtonsoft.Json;
 
 public class PromptHandler : MonoBehaviour
 {
     [SerializeField] private APIRequester apiRequester;
 
-    public IEnumerator SendPrompt(System.Action<string> onResponse)
+    public void GenerateQuestion(string companyName, string question, string userName, System.Action<string> onResponse)
     {
-        // プロンプトの内容をJSON形式で作成
-        // var requestBody = new
-        // {
-        //     model = "gpt-4",
-        //     messages = new List<object>
-        //     {
-        //         new { role = "system", content = "あなたはピアノに関してのインタビューをしています．assistantは今までのインタビューの履歴です．assistantに対して共感してください．その後，assistantに続く質問をしてください．また，60字以内に収めてください．" },
-        //         new { role = "assistant", content = "あなたがピアノを始めたきっかけは何ですか？\n元々姉がピアノを習っていたことです．" },
-        //         new { role = "assistant", content = "あなたの姉さんの影響が大きかったんですね。そこから今のパッションが生まれたんですね。 姉さんは今でもピアノを弾いていますか？" }
-        //     },
-        //     temperature = 1.0,
-        //     max_tokens = 2816,
-        //     top_p = 1.0,
-        //     frequency_penalty = 0.0,
-        //     presence_penalty = 0.0
-        // };
+        Debug.Log("GenerateQuestion called, attempting to send request...");
         var requestBody = new
         {
-            model = "gpt-4o",
+            model = "gpt-4o-mini",
             messages = new List<object>
             {
-                new { role = "system", content = "あなたはアシスタントです。" },
-                new { role = "user", content = "こんにちは" }
-            }
+                new { role = "system", content = $"あなたは面接官です。会社名は{companyName}、応募者は{userName}です。" },
+                new { role = "user", content = $"質問項目: {question}" }
+            },
+            temperature = 0.7,
+            max_tokens = 100,
+            top_p = 1.0,
+            frequency_penalty = 0.0,
+            presence_penalty = 0.0
         };
 
-
-        // Newtonsoft.Jsonを使用してJSON文字列を作成
         string jsonPayload = JsonConvert.SerializeObject(requestBody);
+        // Debug.Log("Request Payload: " + jsonPayload);
 
-        // APIリクエストを送信
-        yield return apiRequester.SendRequest(jsonPayload, response =>
+
+        // 呼び出し部分
+        StartCoroutine(apiRequester.SendRequest(jsonPayload, onResponse)); // StartCoroutine が必要
+        Debug.Log("Starting Coroutine to call SendRequest...");
+        StartCoroutine(apiRequester.SendRequest(jsonPayload, onResponse)); // 必ずコルーチンで呼び出す
+        // Debug.Log("Starting Coroutine to call SendRequest...");
+
+    }
+
+    public void GenerateFollowUp(string companyName, string question, string userAnswer, int depth, System.Action<string> onResponse)
+    {
+        Debug.Log($"GenerateFollowUp called (Depth: {depth})...");
+        var requestBody = new
         {
-            if (response != null)
+            model = "gpt-4o-mini",
+            messages = new List<object>
             {
-                Debug.Log("GPT Response: " + response);
-                onResponse(response);
-            }
-            else
-            {
-                Debug.LogError("Failed to get GPT response");
-                onResponse(null);
-            }
-        });
+                new { role = "system", content = $"あなたは面接官です。会社名は{companyName}、応募者はユーザーです。" },
+                new { role = "assistant", content = $"最初の質問: {question}" },
+                new { role = "user", content = $"回答: {userAnswer}" },
+                new { role = "assistant", content = $"これに基づいた深掘り質問をしてください。深掘りレベル: {depth}" }
+            },
+            temperature = 0.7,
+            max_tokens = 100,
+            top_p = 1.0,
+            frequency_penalty = 0.0,
+            presence_penalty = 0.0
+        };
+
+        string jsonPayload = JsonConvert.SerializeObject(requestBody);
+        StartCoroutine(apiRequester.SendRequest(jsonPayload, onResponse)); // 必ずコルーチンで呼び出す
+        Debug.Log("Starting Coroutine to call SendRequest for follow-up...");
+
+        // apiRequester.SendRequest(jsonPayload, onResponse);
     }
 }
