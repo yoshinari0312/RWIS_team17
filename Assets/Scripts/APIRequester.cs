@@ -6,7 +6,7 @@ using System.Text;
 
 public class APIRequester : MonoBehaviour
 {
-    private string apiKey = "SECRET";
+    private string apiKey = "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";
     private string apiEndpoint = "https://api.openai.com/v1/chat/completions";
 
 

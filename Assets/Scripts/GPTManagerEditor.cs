@@ -18,7 +18,7 @@ public class GPTManagerEditor : Editor
         // ボタンを作成
         if (GUILayout.Button("Submit Answer"))
         {
-            manager.DebugSetAnswer(debugAnswer);
+            // manager.DebugSetAnswer(debugAnswer);
             debugAnswer = ""; // 入力フィールドをクリア
         }
     }

@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
+
 
 public class GPTManager : MonoBehaviour
 {
     [SerializeField] private PromptHandler promptHandler;
+    [SerializeField] private SpeechManagerWithUI speechManager;
 
     // 質問項目リスト
     [SerializeField] private List<string> questionItems;
@@ -33,29 +36,6 @@ public class GPTManager : MonoBehaviour
         Debug.Log("Awake: QuestionItems count = " + questionItems.Count);
     }
 
-    private void Start()
-    {
-        if (promptHandler == null)
-        {
-            Debug.LogError("PromptHandler is not assigned. Please assign it in the Inspector.");
-            return;
-        }
-        Debug.Log("Starting Interview automatically...");
-        StartInterview();
-    }
-    public void DebugSetAnswer(string answer)
-    {
-        if (string.IsNullOrEmpty(answer))
-        {
-            Debug.LogError("回答が空です。正しい回答を入力してください。");
-            return;
-        }
-
-        SetUserAnswer(answer);
-    }
-
-
-
     public void StartInterview()
     {
         Debug.Log("StartInterview called. QuestionItems count: " + questionItems?.Count);
@@ -68,7 +48,6 @@ public class GPTManager : MonoBehaviour
 
         currentQuestionIndex = 0;
         followUpDepth = 0;
-        AskNextQuestion();
     }
 
     private void AskNextQuestion()
@@ -81,7 +60,11 @@ public class GPTManager : MonoBehaviour
                 if (!string.IsNullOrEmpty(response))
                 {
                     Debug.Log("Generated Question: " + response);
-                    Debug.Log($"回答をインスペクターで入力し、DebugSetAnswerメソッドを呼び出してください (例: DebugSetAnswer(\"あなたの回答\"))");
+                    JObject parsedJson = JObject.Parse(response);
+                    string gptReply = (string)parsedJson["choices"][0]["message"]["content"];
+                    Debug.Log($"Raw Response: {gptReply}");
+                    Debug.Log("2222222");
+                    speechManager.ReceiveGPTReply(gptReply);
                 }
                 else
                 {
@@ -95,19 +78,11 @@ public class GPTManager : MonoBehaviour
         }
     }
 
-
     // ユーザー回答をセットするメソッド
-    public void SetUserAnswer(string answer)
+    public void SetUserAnswer(string userAnswer)
     {
-        userAnswer = answer;
         Debug.Log("User answer set: " + userAnswer);
-        ReceiveAnswer(userAnswer);
-    }
-
-
-    public void ReceiveAnswer(string userAnswer)
-    {
-        if (followUpDepth < 2)
+        if (followUpDepth != 0 && followUpDepth < 3)
         {
             Debug.Log("Generating follow-up question...");
             followUpDepth++;
@@ -116,6 +91,11 @@ public class GPTManager : MonoBehaviour
                 if (!string.IsNullOrEmpty(response))
                 {
                     Debug.Log($"Follow-up Question (Depth {followUpDepth}): " + response);
+                    JObject parsedJson = JObject.Parse(response);
+                    string gptReply = (string)parsedJson["choices"][0]["message"]["content"];
+                    Debug.Log($"Raw Response: {gptReply}");
+                    Debug.Log("111111");
+                    speechManager.ReceiveGPTReply(gptReply);
                 }
                 else
                 {
@@ -131,5 +111,4 @@ public class GPTManager : MonoBehaviour
             AskNextQuestion();
         }
     }
-
 }
