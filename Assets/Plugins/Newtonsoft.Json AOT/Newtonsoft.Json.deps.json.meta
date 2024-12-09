@@ -1,7 +1,10 @@
+
 fileFormatVersion: 2
-guid: c334973cef89a9840b0b0c507e0377ab
-ShaderIncludeImporter:
+guid: f38361229b98405e8509995e7cfb1334
+
+TextScriptImporter:
   externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+

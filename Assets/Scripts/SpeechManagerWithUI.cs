@@ -10,13 +10,17 @@ public class SpeechManagerWithUI : MonoBehaviour
     private bool isRecording = false; // 録音中かどうかのフラグ
     private float recordingStartTime; // 録音開始時間
     private bool isProcessing = false; // 処理中フラグ
-    
+    public GPTManager manager; // インスペクターで設定可能にする
+    private string response;
+
 
     void Start()
     {
         // ボタンにクリックイベントを設定
         recordButton.onClick.AddListener(ToggleRecording);
         statusText.text = "準備完了"; // 初期状態を設定
+        manager.StartInterview();
+        manager.SetUserAnswer("");
     }
 
     public void ToggleRecording()
@@ -118,10 +122,11 @@ public class SpeechManagerWithUI : MonoBehaviour
 
         // 認識結果を更新
         string recognizedText = recognizer.GetRecognizedText();
+        // GPTに’認識結果’を送信
+        manager.SetUserAnswer(recognizedText);
         if (!string.IsNullOrEmpty(recognizedText))
         {
             statusText.text = $"認識結果: {recognizedText}";
-            StartCoroutine(SynthesizeSpeech("なるほど、ありがとうございます。"));
         }
         else
         {
@@ -147,5 +152,14 @@ public class SpeechManagerWithUI : MonoBehaviour
             // 再生が完了したらAudioSourceを削除
             Destroy(audioSource, audioClip.length);
         }
+    }
+
+    public void ReceiveGPTReply(string gptReply)
+    {
+        Debug.Log($"SpeechManagerWithUI received GPT reply: {gptReply}");
+        // UIや音声再生などの処理をここに記述
+        response = gptReply;
+        // GPTの返答を音声合成
+        StartCoroutine(SynthesizeSpeech(response));
     }
 }
