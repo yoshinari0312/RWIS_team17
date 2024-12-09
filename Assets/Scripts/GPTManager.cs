@@ -82,7 +82,7 @@ public class GPTManager : MonoBehaviour
     public void SetUserAnswer(string userAnswer)
     {
         Debug.Log("User answer set: " + userAnswer);
-        if (followUpDepth != 0 && followUpDepth < 3)
+        if (followUpDepth == 1 || followUpDepth == 2)
         {
             Debug.Log("Generating follow-up question...");
             followUpDepth++;
@@ -107,8 +107,9 @@ public class GPTManager : MonoBehaviour
         {
             Debug.Log($"Question {currentQuestionIndex + 1} completed. Moving to next question.");
             followUpDepth = 0;
-            currentQuestionIndex++;
             AskNextQuestion();
+            currentQuestionIndex++;
+            followUpDepth++;
         }
     }
 }

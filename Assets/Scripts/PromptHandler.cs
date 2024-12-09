@@ -34,7 +34,6 @@ public class PromptHandler : MonoBehaviour
         // 呼び出し部分
         StartCoroutine(apiRequester.SendRequest(jsonPayload, onResponse)); // StartCoroutine が必要
         Debug.Log("Starting Coroutine to call SendRequest...");
-        StartCoroutine(apiRequester.SendRequest(jsonPayload, onResponse)); // 必ずコルーチンで呼び出す
         // Debug.Log("Starting Coroutine to call SendRequest...");
 
     }

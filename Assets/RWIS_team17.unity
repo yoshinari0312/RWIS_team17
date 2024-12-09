@@ -124,6 +124,85 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &444381943
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 444381947}
+  - component: {fileID: 444381946}
+  - component: {fileID: 444381945}
+  - component: {fileID: 444381944}
+  m_Layer: 0
+  m_Name: GPTManagerObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &444381944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444381943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7570e879e04e04b1a8e6cdb2691f2a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  apiRequester: {fileID: 444381946}
+--- !u!114 &444381945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444381943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b79ab0adf90444a1913167ea011caa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  promptHandler: {fileID: 444381944}
+  speechManager: {fileID: 1001668266}
+  questionItems:
+  - "\u3042\u306A\u305F\u306E\u5F37\u307F\u3092\u6559\u3048\u3066\u304F\u3060\u3055\u3044\u3002"
+  - "\u3053\u308C\u307E\u3067\u306E\u7D4C\u9A13\u3067\u6700\u3082\u5927\u304D\u306A\u6311\u6226\u306F\u4F55\u3067\u3059\u304B\uFF1F"
+  - "\u3053\u306E\u4F1A\u793E\u3092\u5FD7\u671B\u3057\u305F\u7406\u7531\u3092\u6559\u3048\u3066\u304F\u3060\u3055\u3044\u3002"
+  companyName: "NTT\u30C7\u30FC\u30BF"
+  userName: "\u82B9\u5948"
+--- !u!114 &444381946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444381943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfdb16a9b6d1542b994cecc43739f102, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &444381947
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444381943}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &753873283
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,6 +343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recordButton: {fileID: 1707667725}
   statusText: {fileID: 1930787647}
+  manager: {fileID: 444381945}
 --- !u!1 &1339877383
 GameObject:
   m_ObjectHideFlags: 0
